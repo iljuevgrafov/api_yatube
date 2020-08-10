@@ -19,15 +19,12 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        return Response(status=status.HTTP_201_CREATED)
 
     def perform_update(self, serializer):
         serializer.save()
-        return Response(status=status.HTTP_200_OK)
 
     def perform_delete(self, serializer):
         serializer.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -38,17 +35,19 @@ class CommentViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_queryset(self):
-        queryset = get_object_or_404(Post, pk=self.kwargs['id']).comments
-        return queryset
+        if self.kwargs['id']:
+            queryset = get_object_or_404(Post, pk=self.kwargs['id']).comments
+            return queryset
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def perform_create(self, serializer):
+        get_object_or_404(Post, id=self.kwargs['id'])
         serializer.save(author=self.request.user,
                         post_id=self.kwargs['id'])
-        return Response(status=status.HTTP_201_CREATED)
 
     def perform_update(self, serializer):
         serializer.save(author=self.request.user, post_id=self.kwargs['id'])
 
     def perform_delete(self, serializer):
         serializer.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)

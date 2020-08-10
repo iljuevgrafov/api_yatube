@@ -8,7 +8,7 @@ class PostSerializer(serializers.ModelSerializer):
                                           slug_field='username')
 
     class Meta:
-        fields = ('id', 'text', 'author', 'image', 'pub_date')
+        fields = '__all__'
         model = Post
 
 
@@ -18,5 +18,5 @@ class CommentSerializer(serializers.ModelSerializer):
     post = serializers.IntegerField(source='post_id', required=False)
 
     class Meta:
-        fields = ('id', 'text', 'author', 'post', 'created')
+        fields = '__all__'
         model = Comment
