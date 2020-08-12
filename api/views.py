@@ -35,19 +35,18 @@ class CommentViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_queryset(self):
-        if self.kwargs['id']:
-            queryset = get_object_or_404(Post, pk=self.kwargs['id']).comments
-            return queryset
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        queryset = get_object_or_404(Post, pk=self.kwargs.get('id')).comments
+        return queryset
 
     def perform_create(self, serializer):
-        get_object_or_404(Post, id=self.kwargs['id'])
+        get_object_or_404(Post, id=self.kwargs.get('id'))
         serializer.save(author=self.request.user,
-                        post_id=self.kwargs['id'])
+                        post_id=self.kwargs.get('id'))
 
     def perform_update(self, serializer):
-        serializer.save(author=self.request.user, post_id=self.kwargs['id'])
+        get_object_or_404(Post, id=self.kwargs.get('id'))
+        serializer.save(author=self.request.user,
+                        post_id=self.kwargs.get('id'))
 
     def perform_delete(self, serializer):
         serializer.save()
